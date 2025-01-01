@@ -10,7 +10,7 @@ service Message {
   // rpc sendMessage (MessageRequest) returns (MessageResponse); Unary rpc türü
  // rpc sendMessage (MessageRequest) returns ( stream MessageResponse); server streaming
  // rpc sendMessage (stream MessageRequest) returns (  MessageResponse);  Client streaming
-  rpc sendMessage (stream MessageRequest) returns (stream  MessageResponse); // Bi-directional
+  //rpc sendMessage (stream MessageRequest) returns (stream  MessageResponse); // Bi-directional
 }
 
 // The request message containing the user's name.

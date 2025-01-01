@@ -50,6 +50,8 @@ namespace GrpcService.Services
 		}*/
 
 		//Bi-directional
+
+		/*
 		public override async Task sendMessage(IAsyncStreamReader<MessageRequest> requestStream, IServerStreamWriter<MessageResponse> responseStream, ServerCallContext context)
 		{
 			var task1 = Task.Run(async () =>
@@ -68,6 +70,8 @@ namespace GrpcService.Services
 				await responseStream.WriteAsync(new MessageResponse() { Message = "Mesaj" + i });
 			}
 			await task1;
-		}
+		}*/
+
+
 	}
 }

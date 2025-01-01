@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <Protobuf Include="fileTransport.proto" GrpcServices="Client" />
 	  <Protobuf Include="greet.proto" GrpcServices="Client" />
 	  <Protobuf Include="message.proto" GrpcServices="Client" />
   </ItemGroup>

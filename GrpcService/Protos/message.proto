@@ -8,7 +8,8 @@ package message;
 // The greeting service definition.
 service Message {
   // Sends a greeting
-  rpc sendMessage (MessageRequest) returns (MessageResponse);
+ // rpc sendMessage (MessageRequest) returns (MessageResponse); Unary rpc türü
+  rpc sendMessage (MessageRequest) returns ( stream MessageResponse);
 }
 
 // The request message containing the user's name.

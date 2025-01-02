@@ -1,4 +1,4 @@
-﻿using Google.Protobuf;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using grpcFileTransportServer;
@@ -18,8 +18,7 @@ namespace GrpcService.Services
 
 		public override async Task<Empty> FileUpload(IAsyncStreamReader<BytesContent> requestStream, ServerCallContext context)
 		{
-			// Stream ' ın yapılacagı dizini belirleyelim
-
+			// Stream'in yapılacağı dizini belirleyelim
 			string path = Path.Combine(webHostEnvironment.WebRootPath, "files");
 			if (!Directory.Exists(path))
 			{
@@ -30,32 +29,39 @@ namespace GrpcService.Services
 			try
 			{
 				int count = 0;
-
-				decimal chukSize = 0;
+				decimal chunkSize = 0;
+				
 				while (await requestStream.MoveNext())
 				{
-					if (count ++==0)
+					var current = requestStream.Current;
+					
+					if (count++ == 0)
 					{
-
-						fileStream = new FileStream($"{path}/{requestStream.Current.Info.FileName}{requestStream.Current.Info.FileExtension}", FileMode.CreateNew);
-						fileStream.SetLength(requestStream.Current.FileSize);
+						string filePath = Path.Combine(path, $"{current.Info.FileName}{current.Info.FileExtension}");
+						fileStream = new FileStream(filePath, FileMode.Create);
+						fileStream.SetLength(current.FileSize);
 					}
-					var buffer = requestStream.Current.Buffer.ToByteArray();
 
-					await fileStream.WriteAsync(buffer, 0, buffer.Length);
-
-					Console.WriteLine($"{Math.Round((chukSize += requestStream.Current.ReadedByte) * 100 / requestStream.Current.FileSize)}%");
+					var buffer = current.Buffer.ToByteArray();
+					await fileStream.WriteAsync(buffer, 0, current.ReadedByte);
+					Console.WriteLine($"Upload Progress: {Math.Round((chunkSize += current.ReadedByte) * 100 / current.FileSize)}%");
 				}
+
+				return new Empty();
 			}
-			
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Error occurred: {ex.Message}");
-		}
-			 await fileStream.DisposeAsync();
-			fileStream.Close();
-			return new Empty();
-
+				Console.WriteLine($"Error during file upload: {ex.Message}");
+				throw;
+			}
+			finally
+			{
+				if (fileStream != null)
+				{
+					await fileStream.FlushAsync();
+					await fileStream.DisposeAsync();
+				}
+			}
 		}
 
 
